@@ -109,7 +109,7 @@ export interface SchemaInfo {
 
 // === UI Component Types ===
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "tidal-primary" | "tidal-outline";
 export type ButtonSize = "sm" | "md" | "lg";
 export type BadgeVariant = "critical" | "matched" | "new" | "missing" | "uncertain" | "default";
 

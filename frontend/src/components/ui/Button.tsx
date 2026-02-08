@@ -16,6 +16,10 @@ const variantStyles: Record<ButtonVariant, string> = {
     "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary",
   danger:
     "bg-status-critical text-white hover:bg-status-critical/80 active:bg-status-critical/60",
+  "tidal-primary":
+    "bg-accent-primary text-white hover:bg-blue-600 active:bg-blue-700 shadow-lg shadow-blue-500/25",
+  "tidal-outline":
+    "bg-transparent text-accent-primary border-2 border-accent-primary hover:bg-accent-primary hover:text-white",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
