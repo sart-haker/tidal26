@@ -90,7 +90,28 @@ REFERENCE_TYPES = {"GIRTH_WELD", "VALVE", "TEE", "BEND", "FIELD_BEND", "AGM", "F
 ANOMALY_TYPES = {"METAL_LOSS", "CLUSTER", "DENT", "METAL_LOSS_MFG"}
 
 
-def get_column_mapping(year: int) -> dict:
+COLUMN_MAPPINGS["upload"] = {
+    "distance_ft": "log_distance",
+    "feature_type": "event_type",
+    "depth_pct": "depth_percent",
+    "depth_in": "depth_inches",
+    "id_reduction_pct": "id_reduction",
+    "anomaly_length_in": "length",
+    "anomaly_width_in": "width",
+    "joint_length_ft": "joint_length",
+    "wall_thickness_in": "wall_thickness",
+    "dist_to_upstream_gw_ft": "dist_upstream_weld",
+    "dist_to_downstream_gw_ft": "dist_downstream_weld",
+    "internal_external": "orientation",
+    "elevation_ft": "elevation",
+    "mop_psi": "mop",
+    "smys_psi": "smys",
+    "design_pressure_psi": "pdesign",
+    "burst_pressure_psi": "burst_mop",
+}
+
+
+def get_column_mapping(year) -> dict:
     if year not in COLUMN_MAPPINGS:
         raise ValueError(f"No column mapping for year {year}. Available: {list(COLUMN_MAPPINGS.keys())}")
     return COLUMN_MAPPINGS[year]

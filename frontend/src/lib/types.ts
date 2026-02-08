@@ -66,6 +66,47 @@ export interface RunComparison {
   welds: WeldAlignment[];
 }
 
+// === API Types ===
+
+export interface AnalysisSummary {
+  id: string;
+  name: string;
+  run1_year: number;
+  run2_year: number;
+  created_at: string;
+  status: "pending" | "running" | "completed" | "failed";
+  matched_count?: number;
+  new_count?: number;
+  missing_count?: number;
+  uncertain_count?: number;
+  critical_count?: number;
+  weld_count?: number;
+}
+
+export interface AnalysisDetail extends AnalysisSummary {
+  matched_anomalies: MatchedAnomaly[];
+  new_anomalies: NewAnomaly[];
+  missing_anomalies: MissingAnomaly[];
+  uncertain_matches: UncertainMatch[];
+  weld_alignments: WeldAlignment[];
+  distance_tolerance: number;
+  clock_tolerance: number;
+  weld_tolerance: number;
+}
+
+export interface UncertainMatch {
+  run1_idx: number;
+  run2_idx: number;
+  confidence: number;
+  other_candidates: number[];
+}
+
+export interface SchemaInfo {
+  required_columns: string[];
+  optional_columns: string[];
+  description: Record<string, string>;
+}
+
 // === UI Component Types ===
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
