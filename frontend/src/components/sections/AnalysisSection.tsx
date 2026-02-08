@@ -238,7 +238,11 @@ function OverviewTab({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard title="Match Distribution" subtitle="Matched vs New vs Missing">
+        <ChartCard
+          title="Match Distribution"
+          subtitle="Proportion of anomalies matched, newly found, or no longer detected"
+          description="Breakdown of how anomalies were classified across inspection runs — matched (found in both), new (only in later run), or missing (only in earlier run)."
+        >
           <DonutChart
             data={matchDist}
             centerLabel="Total"
@@ -248,17 +252,24 @@ function OverviewTab({
           />
         </ChartCard>
 
-        <ChartCard title="Anomaly Types" subtitle="Matched anomalies by type">
+        <ChartCard
+          title="Anomaly Types"
+          subtitle="Number of matched anomalies broken down by defect category"
+          description="Frequency of each anomaly type (e.g. metal loss, dent, weld) among matched pairs. Helps identify dominant defect categories."
+        >
           <BarChart
             data={eventTypes as unknown as Record<string, unknown>[]}
             xKey="type"
             series={[{ key: "count", label: "Count", color: "#B8A9E8" }]}
+            xLabel="Anomaly Type"
+            yLabel="Count"
           />
         </ChartCard>
 
         <ChartCard
           title="Depth Comparison"
-          subtitle={`Run ${run1} vs Run ${run2} depth (%)`}
+          subtitle={`Wall-loss depth (%) in ${run1} vs ${run2} for each matched anomaly`}
+          description="Each point is a matched anomaly plotted by its depth in both runs. Points above the diagonal indicate growth between inspections."
         >
           <ScatterChart
             data={depthScatter as unknown as Record<string, unknown>[]}
@@ -271,12 +282,15 @@ function OverviewTab({
 
         <ChartCard
           title="Weld Offset Progression"
-          subtitle="Position correction along pipeline"
+          subtitle="Weld-to-weld position offset (ft) vs distance along the pipeline"
+          description="Shows how weld position offsets vary along the pipeline length. Large offsets may indicate alignment drift between inspection tools."
         >
           <LineChart
             data={weldOffsets as unknown as Record<string, unknown>[]}
             xKey="distance"
             series={[{ key: "offset", label: "Offset (ft)", color: "#8EC5E8" }]}
+            xLabel="Distance (ft)"
+            yLabel="Offset (ft)"
           />
         </ChartCard>
       </div>
@@ -320,24 +334,26 @@ function MatchedTab({ data }: { data: ReturnType<typeof getRunData> }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard
           title="Growth Rate Distribution"
-          subtitle="Depth growth rates (%/yr)"
+          subtitle="Histogram of annual depth change rates across all matched anomalies"
+          description="How fast anomaly depths are changing between runs. Higher rates indicate accelerating corrosion that may need priority remediation."
         >
           <Histogram
             data={growthRates}
             xLabel="Growth Rate (%/yr)"
-            yLabel="Count"
+            yLabel="Anomaly Count"
             bins={20}
           />
         </ChartCard>
 
         <ChartCard
           title="Confidence Distribution"
-          subtitle="Match confidence scores"
+          subtitle="How confident the algorithm is that each anomaly pair is the same defect (0–1)"
+          description="Distribution of matching algorithm confidence scores (0–1). Higher values indicate stronger evidence that two anomalies are the same defect across runs."
         >
           <Histogram
             data={confidences}
-            xLabel="Confidence"
-            yLabel="Count"
+            xLabel="Confidence Score"
+            yLabel="Anomaly Count"
             bins={15}
             color="#8EC5E8"
           />
@@ -433,7 +449,8 @@ function ClustersTab({ run2, dynamicClusters }: { run2: number; dynamicClusters?
 
       <ChartCard
         title="Cluster Severity (Top 20)"
-        subtitle="Sorted by severity score"
+        subtitle="Top 20 clusters ranked by composite severity — higher bars = greater risk"
+        description="The 20 most severe anomaly clusters ranked by composite severity score. Critical clusters may require immediate engineering assessment."
       >
         <BarChart
           data={severityData as unknown as Record<string, unknown>[]}
@@ -441,6 +458,8 @@ function ClustersTab({ run2, dynamicClusters }: { run2: number; dynamicClusters?
           series={[
             { key: "severity_score", label: "Severity", color: "#E8887A" },
           ]}
+          xLabel="Cluster ID"
+          yLabel="Severity Score"
         />
       </ChartCard>
 
@@ -491,7 +510,8 @@ function PredictionsTab({ dynamicPredictions }: { dynamicPredictions?: Predictio
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard
           title="Corrosion Risk Along Pipeline"
-          subtitle="Average & max probability by distance"
+          subtitle="ML-predicted corrosion probability (avg and max) at each pipeline segment"
+          description="ML-predicted corrosion probability along the pipeline. Peaks in the max line highlight hotspots where future corrosion is most likely."
         >
           <AreaChart
             data={riskByDist as unknown as Record<string, unknown>[]}
@@ -500,17 +520,20 @@ function PredictionsTab({ dynamicPredictions }: { dynamicPredictions?: Predictio
               { key: "max_probability", label: "Max", color: "#E8887A" },
               { key: "avg_probability", label: "Average", color: "#F7C59F" },
             ]}
+            xLabel="Distance (ft)"
+            yLabel="Probability"
           />
         </ChartCard>
 
         <ChartCard
           title="Probability Distribution"
-          subtitle="Corrosion probability across all grid points"
+          subtitle="How many grid points fall into each probability range — right tail = high-risk zones"
+          description="Spread of predicted corrosion probabilities. A right-skewed distribution means most locations are low-risk, with a tail of high-risk points."
         >
           <Histogram
             data={probabilities}
-            xLabel="Probability"
-            yLabel="Count"
+            xLabel="Corrosion Probability"
+            yLabel="Grid Point Count"
             bins={20}
             color="#B8A9E8"
           />

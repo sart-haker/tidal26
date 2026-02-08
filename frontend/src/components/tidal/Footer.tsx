@@ -20,6 +20,9 @@ export function Footer({ className }: FooterProps) {
           <p className="text-xs text-text-muted">
             &copy; {new Date().getFullYear()} PenguinPipe &middot; Built at TIDAL Hack &apos;26
           </p>
+          <p className="text-sm font-bold text-white">
+            Artwork from TIDAL Hack
+          </p>
         </div>
       </div>
     </footer>

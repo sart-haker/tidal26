@@ -54,21 +54,21 @@ export function Histogram({
         <XAxis
           dataKey="bin"
           stroke="#A0B4C8"
-          tick={{ fill: "#D0DEE8", fontSize: 11 }}
+          tick={{ fill: "#2C4A6B", fontSize: 11 }}
           tickLine={false}
           label={
             xLabel
-              ? { value: xLabel, position: "insideBottom", offset: -5, fill: "#D0DEE8", fontSize: 12 }
+              ? { value: xLabel, position: "insideBottom", offset: -5, fill: "#4A6A8A", fontSize: 12 }
               : undefined
           }
         />
         <YAxis
           stroke="#A0B4C8"
-          tick={{ fill: "#D0DEE8", fontSize: 12 }}
+          tick={{ fill: "#2C4A6B", fontSize: 12 }}
           tickLine={false}
           label={
             yLabel
-              ? { value: yLabel, angle: -90, position: "insideLeft", fill: "#D0DEE8", fontSize: 12 }
+              ? { value: yLabel, angle: -90, position: "insideLeft", fill: "#4A6A8A", fontSize: 12 }
               : undefined
           }
         />
