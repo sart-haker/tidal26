@@ -41,6 +41,21 @@ This project processes ILI data from three inspection years (2007, 2015, 2022) t
 | High-risk predicted locations | 969 |
 | Monitoring point reduction | 88% fewer items vs. individual assessment |
 
+### How We Built It
+
+| Layer | Stack |
+|-------|-------|
+| **Frontend** | Next.js 16, TypeScript, Tailwind CSS 4, Recharts, Radix UI, Lucide icons |
+| **Backend API** | Python, FastAPI, Uvicorn, Gunicorn, Pydantic |
+| **Database** | MongoDB (Motor async driver, PyMongo) |
+| **ML / Data Science** | scikit-learn (Random Forest, Gradient Boosting, DBSCAN), pandas, NumPy, SciPy, Matplotlib |
+| **AI Chat & Analysis** | Google Gemini 2.0 Flash (via `google-generativeai` SDK) |
+| **Text-to-Speech** | ElevenLabs REST API (via `httpx`) |
+| **Auth** | JWT (`python-jose`), bcrypt (`passlib`) |
+| **Deployment** | Gunicorn + Uvicorn workers (see `Procfile`) |
+
+The **backend** serves two roles: (1) a data-science pipeline that runs offline (`backend/src/`) to align ILI data, cluster anomalies, and train ML models, and (2) a FastAPI REST API (`backend/app/`) that exposes those results—plus AI-powered chat and TTS—to the frontend. The **frontend** is a Next.js dashboard that visualizes inspection data, interaction zones, predictions, and lets users ask natural-language questions about their pipeline via the Gemini-backed AI assistant.
+
 ---
 
 ## Quick Start
