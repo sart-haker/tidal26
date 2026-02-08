@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+
 
 export function HeroSection() {
   return (
@@ -21,7 +21,7 @@ export function HeroSection() {
       {/* Main content */}
       <div className="text-center max-w-2xl relative z-10">
         <h1 className="font-bubble text-5xl md:text-7xl mb-4 drop-shadow-sm">
-          RCP Track
+          PenguinPipe
         </h1>
         <p className="text-xl md:text-2xl text-white/90 font-medium mb-6">
           Pipeline ILI Anomaly Tracking &amp; Analysis
@@ -33,14 +33,6 @@ export function HeroSection() {
         </p>
       </div>
 
-      {/* Scroll indicator */}
-      <a
-        href="#analysis"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 hover:text-white/80 transition-colors animate-bounce"
-        aria-label="Scroll to analysis"
-      >
-        <ChevronDown className="h-8 w-8" />
-      </a>
     </section>
   );
 }

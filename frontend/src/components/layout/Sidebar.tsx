@@ -28,7 +28,7 @@ export function Sidebar() {
         <Activity className="h-6 w-6 text-accent-primary" />
         <div>
           <h1 className="text-sm font-bold text-text-primary tracking-wide">
-            RCP Track
+            PenguinPipe
           </h1>
           <p className="text-[10px] text-text-muted">Pipeline ILI Analysis</p>
         </div>

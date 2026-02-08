@@ -64,7 +64,7 @@ export default function PlaygroundPage() {
     <>
       <TopBar
         title="Component Playground"
-        subtitle="All reusable UI components for RCP Track"
+        subtitle="All reusable UI components for PenguinPipe"
       />
       <div className="p-6 space-y-2 max-w-7xl">
         {/* ===== BUTTONS ===== */}

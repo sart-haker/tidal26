@@ -20,7 +20,7 @@ const dynaPuff = DynaPuff({
 });
 
 export const metadata: Metadata = {
-  title: "RCP Track — Pipeline ILI Analysis",
+  title: "PenguinPipe — Pipeline ILI Analysis",
   description:
     "In-Line Inspection data alignment and growth analysis for pipeline anomalies",
 };
