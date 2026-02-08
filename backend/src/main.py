@@ -15,7 +15,6 @@ RUN_DATES = {
     2022: 2022,
 }
 
-
 def run_pipeline_from_dataframes(
     df_run1: pd.DataFrame,
     df_run2: pd.DataFrame,
@@ -147,10 +146,12 @@ def run_all_comparisons(data_dir: str, output_dir: str):
 
 if __name__ == "__main__":
     data_dir = os.path.join(os.path.dirname(__file__), "..", "data")
-    output_dir = os.path.join(os.path.dirname(__file__), "..", "output")
+    output_dir = os.path.join(os.path.dirname(__file__), "..", "output", "anomaly_comparisons")
 
     if len(sys.argv) >= 3:
         run1 = int(sys.argv[1])
+
+        
         run2 = int(sys.argv[2])
         run_pipeline(data_dir, output_dir, run1, run2)
     elif len(sys.argv) == 2 and sys.argv[1] == "all":

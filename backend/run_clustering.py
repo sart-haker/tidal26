@@ -24,15 +24,15 @@ import pandas as pd
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from clustering.cluster_detector import AnomalyClusterDetector
-from visualization.cluster_viz import plot_cluster_map, plot_cluster_severity
+from src.clustering.cluster_detector import AnomalyClusterDetector
+from src.visualization.cluster_viz import plot_cluster_map, plot_cluster_severity
 
 
 def main():
     """Main execution function."""
     
     # Ensure output directory exists
-    output_dir = os.path.join(os.path.dirname(__file__), 'output')
+    output_dir = os.path.join(os.path.dirname(__file__), 'output','clustering')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         print(f"Created output directory: {output_dir}/")
