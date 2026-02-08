@@ -274,13 +274,13 @@ def select_model_features(df: pd.DataFrame) -> List[str]:
         List of feature column names to use in model
     """
     # Core features to include
+    # Note: clock_decimal, is_top_half, is_bottom_half, distance_from_6_oclock are excluded
+    # because they are structurally unavailable for grid-sampled locations near reference
+    # features (welds, bends) — including them would require fabricating values or dropping
+    # 80%+ of training data. They also have <2% feature importance.
     core_features = [
         'wall_thickness',
         'elevation',
-        'clock_decimal',
-        'is_top_half',
-        'is_bottom_half',
-        'distance_from_6_oclock',
     ]
     
     # Distance features
@@ -296,7 +296,10 @@ def select_model_features(df: pd.DataFrame) -> List[str]:
     elevation_features = [col for col in df.columns if 'elevation_' in col]
     
     # Stress features
-    stress_features = ['high_stress_indicator', 'in_weld_vicinity', 'is_thin_wall', 'min_dist_to_weld']
+    # Note: in_weld_vicinity and min_dist_to_weld excluded — they depend on
+    # dist_upstream_weld/dist_downstream_weld columns that are structurally missing
+    # for most grid-sampled training points (~86% missing)
+    stress_features = ['high_stress_indicator', 'is_thin_wall']
     
     # Combine all
     all_features = (

@@ -50,13 +50,23 @@ def main():
         periods=[(2007, 2015), (2015, 2022)]
     )
     
-    # Clean combined data: replace inf with NaN, then fill NaN with median/0
-    X = X.replace([np.inf, -np.inf], np.nan)
-    for col in X.columns:
-        if X[col].isna().any():
-            median_val = X[col].median()
-            X[col] = X[col].fillna(median_val if pd.notna(median_val) else 0)
-    
+    # Clean combined data: cap infinities, drop rows with NaN (no fake median fill)
+    dist_cols = X.filter(like='dist_to_').columns.tolist()
+    if dist_cols:
+        finite_max = X[dist_cols].replace([np.inf, -np.inf], np.nan).max().max()
+        cap_value = finite_max * 2 if pd.notna(finite_max) and finite_max > 0 else 100000
+        X = X.replace([np.inf, -np.inf], cap_value)
+        print(f"\n  Capped infinite distance values at {cap_value:.1f}")
+    else:
+        X = X.replace([np.inf, -np.inf], np.nan)
+
+    remaining_nan = X.isna().any(axis=1).sum()
+    if remaining_nan > 0:
+        print(f"  Dropping {remaining_nan} rows with NaN values ({remaining_nan/len(X)*100:.1f}%)")
+        valid_idx = X.dropna().index
+        X = X.loc[valid_idx]
+        y = y.loc[valid_idx]
+
     print(f"\nRemaining NaN after cleaning: {X.isna().sum().sum()}")
     
     # Split data

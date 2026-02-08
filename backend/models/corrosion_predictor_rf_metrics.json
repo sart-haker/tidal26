@@ -1,114 +1,86 @@
 {
   "train": {
-    "accuracy": 0.9379067722075638,
-    "precision": 0.8792613636363636,
-    "recall": 0.8712174524982407,
-    "f1": 0.8752209261223047,
-    "roc_auc": 0.9805003809118912
+    "accuracy": 0.9409949164851126,
+    "precision": 0.880410858400587,
+    "recall": 0.8810572687224669,
+    "f1": 0.8807339449541285,
+    "roc_auc": 0.9834167780561631
   },
   "validation": {
-    "accuracy": 0.9142053445850914,
-    "precision": 0.8421052631578947,
-    "recall": 0.8089887640449438,
-    "f1": 0.8252148997134671,
-    "roc_auc": 0.954850644012058
+    "accuracy": 0.9143064633260711,
+    "precision": 0.8409785932721713,
+    "recall": 0.8064516129032258,
+    "f1": 0.8233532934131736,
+    "roc_auc": 0.9420424823650629
   },
   "feature_importance": [
     {
       "feature": "anomaly_density_100ft",
-      "importance": 0.21805182080573632
-    },
-    {
-      "feature": "anomaly_density_50ft",
-      "importance": 0.18449601717098155
+      "importance": 0.24838344867421996
     },
     {
       "feature": "dist_to_nearest_anomaly",
-      "importance": 0.17469238718034427
+      "importance": 0.17978740451096442
+    },
+    {
+      "feature": "anomaly_density_50ft",
+      "importance": 0.17237332007351855
     },
     {
       "feature": "elevation",
-      "importance": 0.08871034410310305
+      "importance": 0.09735886983025017
     },
     {
       "feature": "dist_to_tee",
-      "importance": 0.06324411568833314
-    },
-    {
-      "feature": "dist_to_attachment",
-      "importance": 0.051053441578692606
+      "importance": 0.058997143386407706
     },
     {
       "feature": "dist_to_bend",
-      "importance": 0.048299377416437694
+      "importance": 0.056140170415437854
     },
     {
       "feature": "dist_to_support",
-      "importance": 0.04475136176505687
+      "importance": 0.04488974827653503
+    },
+    {
+      "feature": "dist_to_attachment",
+      "importance": 0.03643218200498515
     },
     {
       "feature": "dist_to_girth_weld",
-      "importance": 0.03169405770413745
+      "importance": 0.03324891772759702
     },
     {
       "feature": "elevation_slope",
-      "importance": 0.019388774340407065
+      "importance": 0.02156115380661298
     },
     {
       "feature": "elevation_rolling_mean",
-      "importance": 0.019144343888892343
+      "importance": 0.02152826016349107
     },
     {
       "feature": "elevation_rolling_std",
-      "importance": 0.015402731446623871
-    },
-    {
-      "feature": "clock_decimal",
-      "importance": 0.012485987669603954
-    },
-    {
-      "feature": "distance_from_6_oclock",
-      "importance": 0.010828639447220683
+      "importance": 0.01709807148915218
     },
     {
       "feature": "high_stress_indicator",
-      "importance": 0.0051409211881139685
+      "importance": 0.005642938032508319
     },
     {
-      "feature": "period",
-      "importance": 0.003192948521972566
-    },
-    {
-      "feature": "is_bottom_half",
-      "importance": 0.001770195314797776
-    },
-    {
-      "feature": "min_dist_to_weld",
-      "importance": 0.0017453371475291172
-    },
-    {
-      "feature": "in_weld_vicinity",
-      "importance": 0.0017142128608836282
+      "feature": "dist_to_valve",
+      "importance": 0.0023271087551022273
     },
     {
       "feature": "years_between",
-      "importance": 0.001693484701533104
+      "importance": 0.0022414343448295205
     },
     {
       "feature": "is_thin_wall",
-      "importance": 0.0012147878416494996
+      "importance": 0.0011560441316604444
     },
     {
       "feature": "wall_thickness",
-      "importance": 0.0009063928273313544
-    },
-    {
-      "feature": "is_top_half",
-      "importance": 0.00035795029712174756
-    },
-    {
-      "feature": "bend_angle",
-      "importance": 2.03690934962992e-05
+      "importance": 0.0008337843767271901
     },
     {
       "feature": "is_right",
@@ -131,7 +103,7 @@
       "importance": 0.0
     },
     {
-      "feature": "dist_to_valve",
+      "feature": "bend_angle",
       "importance": 0.0
     }
   ]

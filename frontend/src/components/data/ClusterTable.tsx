@@ -22,13 +22,15 @@ const columns: ColumnDef<ClusterStats>[] = [
     key: "center_distance_ft",
     header: "Center (ft)",
     sortable: true,
-    render: (val) => formatDistance(val as number),
+    render: (val) =>
+      val !== null && val !== undefined ? formatDistance(val as number) : "—",
   },
   {
     key: "span_ft",
     header: "Span (ft)",
     sortable: true,
-    render: (val) => `${(val as number).toFixed(1)}`,
+    render: (val) =>
+      val !== null && val !== undefined ? `${(val as number).toFixed(1)}` : "—",
   },
   {
     key: "anomaly_count",
@@ -41,6 +43,7 @@ const columns: ColumnDef<ClusterStats>[] = [
     header: "Max Depth %",
     sortable: true,
     render: (val) => {
+      if (val === null || val === undefined) return <span className="text-text-muted">—</span>;
       const v = val as number;
       const color = v >= 40 ? "text-status-critical" : v >= 25 ? "text-status-warning" : "text-text-primary";
       return <span className={color}>{v.toFixed(1)}%</span>;
@@ -51,6 +54,7 @@ const columns: ColumnDef<ClusterStats>[] = [
     header: "Severity",
     sortable: true,
     render: (val) => {
+      if (val === null || val === undefined) return <span className="text-text-muted">—</span>;
       const v = val as number;
       const color = v >= 50 ? "text-status-critical" : v >= 30 ? "text-status-warning" : "text-text-primary";
       return <span className={`font-medium ${color}`}>{v.toFixed(1)}</span>;

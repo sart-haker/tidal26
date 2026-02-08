@@ -2,10 +2,6 @@
   "features": [
     "wall_thickness",
     "elevation",
-    "clock_decimal",
-    "is_top_half",
-    "is_bottom_half",
-    "distance_from_6_oclock",
     "dist_to_girth_weld",
     "dist_to_bend",
     "dist_to_valve",
@@ -26,9 +22,6 @@
     "elevation_rolling_std",
     "high_stress_indicator",
     "is_thin_wall",
-    "period",
-    "years_between",
-    "in_weld_vicinity",
-    "min_dist_to_weld"
+    "years_between"
   ]
 }

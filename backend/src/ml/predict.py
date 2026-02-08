@@ -81,7 +81,7 @@ def predict_future_corrosion(
     
     baseline_data.drop('_temp_dist', axis=1, inplace=True)
     
-    prediction_df = pd.DataFrame(prediction_samples)
+    prediction_df = pd.DataFrame(prediction_samples).reset_index(drop=True)
     print(f"  Created {len(prediction_df)} prediction samples")
     
     # Engineer features
@@ -91,25 +91,36 @@ def predict_future_corrosion(
         existing_anomalies=baseline_anomalies
     )
     
-    # Add any missing columns that the model expects (e.g. from multi-period training)
-    for col in feature_names:
-        if col not in prediction_df.columns:
-            prediction_df[col] = 0
-    
+    # Add known metadata that multi-period models expect (real value, not fabricated)
+    if 'years_between' in feature_names and 'years_between' not in prediction_df.columns:
+        prediction_df['years_between'] = 7  # typical inspection interval
+
+    # Check for remaining missing columns — warn and skip rather than fabricating zeros
+    missing_cols = [col for col in feature_names if col not in prediction_df.columns]
+    if missing_cols:
+        print(f"  Warning: Missing features for prediction (skipping): {missing_cols}")
+        feature_names = [col for col in feature_names if col in prediction_df.columns]
+
     # Select features matching model
     X_pred = prediction_df[feature_names].copy()
-    
-    # Handle missing values (same as training)
-    for col in X_pred.columns:
-        if X_pred[col].dtype in ['float64', 'int64']:
-            X_pred[col] = X_pred[col].fillna(X_pred[col].median())
-        else:
-            X_pred[col] = X_pred[col].fillna('unknown')
-    
-    X_pred = X_pred.replace([np.inf, -np.inf], np.nan)
-    for col in X_pred.columns:
-        if X_pred[col].isnull().any():
-            X_pred[col] = X_pred[col].fillna(0)
+
+    # Cap infinite values at realistic maximum (no fake median fill)
+    dist_cols = X_pred.filter(like='dist_to_').columns.tolist()
+    if dist_cols:
+        finite_max = X_pred[dist_cols].replace([np.inf, -np.inf], np.nan).max().max()
+        cap_value = finite_max * 2 if pd.notna(finite_max) and finite_max > 0 else 100000
+        X_pred = X_pred.replace([np.inf, -np.inf], cap_value)
+        print(f"  Capped infinite distance values at {cap_value:.1f}")
+    else:
+        X_pred = X_pred.replace([np.inf, -np.inf], np.nan)
+
+    # Drop rows with NaN rather than imputing fake values
+    nan_rows = X_pred.isnull().any(axis=1).sum()
+    if nan_rows > 0:
+        print(f"  Dropping {nan_rows} prediction points with incomplete data ({nan_rows/len(X_pred)*100:.1f}%)")
+        valid_mask = ~X_pred.isnull().any(axis=1)
+        X_pred = X_pred[valid_mask]
+        prediction_df = prediction_df.loc[X_pred.index]
     
     # Make predictions
     print("\nMaking predictions...")

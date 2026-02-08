@@ -177,37 +177,36 @@ def prepare_dataset(
     # Drop any duplicate columns
     X = X.loc[:, ~X.columns.duplicated()]
     
-    # Handle missing values
-    print(f"\nHandling missing values...")
-    print(f"  Missing values per feature:")
+    # Handle missing values honestly — no fake median imputation
+    print(f"\nHandling missing values (no imputation)...")
     missing_counts = X.isnull().sum()
     for col in missing_counts[missing_counts > 0].index:
         print(f"    {col}: {missing_counts[col]} ({missing_counts[col]/len(X)*100:.1f}%)")
-    
-    # Fill missing values
-    for col in X.columns:
-        col_data = X[col]
-        # Guard against duplicate columns returning a DataFrame
-        if isinstance(col_data, pd.DataFrame):
-            col_data = col_data.iloc[:, 0]
-            X = X.loc[:, ~X.columns.duplicated()]
-        if col_data.dtype in ['float64', 'int64', 'float32', 'int32']:
-            # For numeric, use median
-            X[col] = col_data.fillna(col_data.median())
-        else:
-            # For categorical, use mode or 'unknown'
-            X[col] = col_data.fillna('unknown')
-    
-    # Handle infinite values
-    X = X.replace([np.inf, -np.inf], np.nan)
-    for col in X.columns:
-        col_data = X[col]
-        if isinstance(col_data, pd.DataFrame):
-            col_data = col_data.iloc[:, 0]
-            X = X.loc[:, ~X.columns.duplicated()]
-        if col_data.isnull().any():
-            median_val = col_data.median()
-            X[col] = col_data.fillna(median_val if pd.notna(median_val) else 0)
+
+    # Drop rows where ALL critical features are NaN (only ~8 rows across all years)
+    critical_cols = [col for col in ['wall_thickness', 'elevation', 'clock_decimal'] if col in X.columns]
+    if critical_cols:
+        before_count = len(X)
+        X = X.dropna(subset=critical_cols, how='all')
+        y = y.loc[X.index]
+        dropped = before_count - len(X)
+        if dropped > 0:
+            print(f"  Dropped {dropped} rows with all-NaN critical features")
+
+    # Cap infinite values at realistic maximum instead of filling with median
+    dist_cols = X.filter(like='dist_to_').columns.tolist()
+    if dist_cols:
+        finite_max = X[dist_cols].replace([np.inf, -np.inf], np.nan).max().max()
+        cap_value = finite_max * 2 if pd.notna(finite_max) and finite_max > 0 else 100000
+        X = X.replace([np.inf, -np.inf], cap_value)
+        print(f"  Capped infinite distance values at {cap_value:.1f}")
+
+    # Drop any remaining rows with NaN rather than fabricating values
+    remaining_nan = X.isnull().any(axis=1).sum()
+    if remaining_nan > 0:
+        print(f"  Dropping {remaining_nan} rows with remaining NaN values ({remaining_nan/len(X)*100:.1f}%)")
+        X = X.dropna()
+        y = y.loc[X.index]
     
     print(f"\nFinal dataset shape: {X.shape}")
     print(f"Target distribution:")
@@ -241,8 +240,8 @@ def create_multi_period_dataset(
         try:
             X, y = prepare_dataset(run1_year, run2_year, data_dir, output_dir)
             
-            # Add period identifier
-            X['period'] = f"{run1_year}_{run2_year}"
+            # Add period metadata (years_between is a real numeric feature;
+            # period is a categorical identifier excluded from model features)
             X['years_between'] = run2_year - run1_year
             
             all_X.append(X)
