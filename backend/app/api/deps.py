@@ -20,6 +20,7 @@ from app.services.inspection_service import InspectionService
 from app.services.clustering_service import ClusteringService
 from app.services.matching_service import MatchingService
 from app.services.analytics_service import AnalyticsService
+from app.services.prediction_service import PredictionService
 
 
 # -- database -------------------------------------------------------------
@@ -85,6 +86,14 @@ def get_analytics_service(
     matched_pair_repo=Depends(get_matched_pair_repo),
 ) -> AnalyticsService:
     return AnalyticsService(anomaly_repo, cluster_repo, inspection_repo, matched_pair_repo)
+
+
+def get_prediction_service(
+    anomaly_repo=Depends(get_anomaly_repo),
+    inspection_repo=Depends(get_inspection_repo),
+    db=Depends(get_db),
+) -> PredictionService:
+    return PredictionService(anomaly_repo, inspection_repo, db)
 
 
 # -- auth -----------------------------------------------------------------

@@ -1,7 +1,8 @@
-"""Inspection + CSV upload business logic."""
+"""Inspection + CSV/Excel upload business logic."""
 
 import io
 import math
+import os
 import pandas as pd
 from datetime import datetime, timezone
 
@@ -41,13 +42,27 @@ class InspectionService:
         file_content: bytes,
         filename: str,
     ) -> dict:
-        """Parse a CSV file and store its anomalies in MongoDB."""
+        """Parse a CSV or Excel file and store its anomalies in MongoDB."""
 
-        # Read CSV
-        try:
-            df = pd.read_csv(io.BytesIO(file_content))
-        except Exception as e:
-            raise BadRequestError(f"Failed to parse CSV: {e}")
+        ext = os.path.splitext(filename)[1].lower()
+
+        if ext in (".xlsx", ".xls"):
+            # Excel file
+            try:
+                df = pd.read_excel(io.BytesIO(file_content), engine="openpyxl" if ext == ".xlsx" else "xlrd")
+            except Exception as e:
+                raise BadRequestError(f"Failed to parse Excel file: {e}")
+        else:
+            # CSV file (try UTF-8 first, fall back to Latin-1)
+            try:
+                df = pd.read_csv(io.BytesIO(file_content), encoding="utf-8")
+            except UnicodeDecodeError:
+                try:
+                    df = pd.read_csv(io.BytesIO(file_content), encoding="latin-1")
+                except Exception as e:
+                    raise BadRequestError(f"Failed to parse CSV: {e}")
+            except Exception as e:
+                raise BadRequestError(f"Failed to parse CSV: {e}")
 
         if df.empty:
             raise BadRequestError("CSV file is empty")
