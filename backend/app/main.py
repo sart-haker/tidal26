@@ -10,7 +10,7 @@ from app.config import settings
 from app.database import connect_to_mongo, close_mongo_connection
 
 # Route modules
-from app.api.routes import auth, pipelines, inspections, anomalies, clustering, matching, ai, predictions
+from app.api.routes import auth, pipelines, inspections, anomalies, clustering, matching, ai, predictions, tts
 
 
 @asynccontextmanager
@@ -57,6 +57,7 @@ app.include_router(clustering.router)
 app.include_router(matching.router)
 app.include_router(ai.router)
 app.include_router(predictions.router)
+app.include_router(tts.router)
 
 
 @app.get("/api/health")

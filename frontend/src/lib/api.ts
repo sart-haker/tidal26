@@ -88,3 +88,18 @@ export async function getAiStatus(): Promise<{ status: string; model?: string }>
   if (!res.ok) throw new Error("Failed to check AI status");
   return res.json();
 }
+
+// ── TTS / ElevenLabs ──────────────────────────────────────────────────────
+
+export async function synthesizeSpeech(text: string): Promise<Blob> {
+  const res = await fetch(`${API_BASE}/tts/synthesize`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "TTS failed" }));
+    throw new Error(err.detail || "Text-to-speech failed");
+  }
+  return res.blob();
+}

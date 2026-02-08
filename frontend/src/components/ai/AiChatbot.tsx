@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { sendAiChat, runAiAnalysis } from "@/lib/api";
+import { sendAiChat, runAiAnalysis, synthesizeSpeech } from "@/lib/api";
 import { buildDataSummary } from "@/lib/data/summarize";
 import type { AiChatMessage } from "@/lib/types";
 import {
@@ -13,13 +13,31 @@ import {
   Minimize2,
   AlertTriangle,
   RotateCcw,
+  Volume2,
+  Square,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 // ── Chat bubble ────────────────────────────────────────────────────────
 
-function ChatBubble({ message }: { message: AiChatMessage }) {
+function ChatBubble({
+  message,
+  messageIdx,
+  speakingIdx,
+  ttsLoading,
+  onSpeak,
+}: {
+  message: AiChatMessage;
+  messageIdx: number;
+  speakingIdx: number | null;
+  ttsLoading: number | null;
+  onSpeak: (text: string, idx: number) => void;
+}) {
   const isUser = message.role === "user";
+  const isSpeaking = speakingIdx === messageIdx;
+  const isLoadingTts = ttsLoading === messageIdx;
+
   return (
     <div className={cn("flex gap-2", isUser ? "justify-end" : "justify-start")}>
       {!isUser && (
@@ -42,17 +60,49 @@ function ChatBubble({ message }: { message: AiChatMessage }) {
         )}
       >
         <div className="whitespace-pre-wrap break-words">{message.content}</div>
-        {message.sources && message.sources.length > 0 && (
+
+        {/* Footer row: sources + speak button for assistant, sources only for user */}
+        {!isUser && (
+          <div className="mt-2 pt-1.5 border-t border-white/10 flex items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1">
+              {message.sources?.map((s) => (
+                <span
+                  key={s}
+                  className="text-[10px] rounded px-1.5 py-0.5 bg-border/40 text-text-muted"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+            <button
+              onClick={() => onSpeak(message.content, messageIdx)}
+              disabled={isLoadingTts}
+              className={cn(
+                "shrink-0 p-1 rounded-md transition-colors",
+                isSpeaking
+                  ? "text-accent-primary bg-accent-primary/10"
+                  : "text-text-muted hover:text-text-secondary hover:bg-surface-hover",
+                isLoadingTts && "opacity-50 cursor-wait"
+              )}
+              title={isSpeaking ? "Stop speaking" : "Read aloud"}
+            >
+              {isLoadingTts ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : isSpeaking ? (
+                <Square className="h-3 w-3" />
+              ) : (
+                <Volume2 className="h-3.5 w-3.5" />
+              )}
+            </button>
+          </div>
+        )}
+
+        {isUser && message.sources && message.sources.length > 0 && (
           <div className="mt-2 pt-1.5 border-t border-white/10 flex flex-wrap gap-1">
             {message.sources.map((s) => (
               <span
                 key={s}
-                className={cn(
-                  "text-[10px] rounded px-1.5 py-0.5",
-                  isUser
-                    ? "bg-white/15 text-white/80"
-                    : "bg-border/40 text-text-muted"
-                )}
+                className="text-[10px] rounded px-1.5 py-0.5 bg-white/15 text-white/80"
               >
                 {s}
               </span>
@@ -72,8 +122,12 @@ export function AiChatbot() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [ttsLoading, setTtsLoading] = useState<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
 
   // Build the data summary once (memoised by reference stability)
   const dataContext = useRef(buildDataSummary("all")).current;
@@ -91,6 +145,56 @@ export function AiChatbot() {
       setTimeout(() => inputRef.current?.focus(), 200);
     }
   }, [open]);
+
+  // ── TTS playback ──────────────────────────────────────────────────────
+
+  const cleanupAudio = useCallback(() => {
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+  }, []);
+
+  const stopSpeaking = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    cleanupAudio();
+    setSpeakingIdx(null);
+  }, [cleanupAudio]);
+
+  const handleSpeak = async (text: string, messageIdx: number) => {
+    if (speakingIdx === messageIdx) {
+      stopSpeaking();
+      return;
+    }
+    stopSpeaking();
+    setTtsLoading(messageIdx);
+    try {
+      const truncated = text.length > 500
+        ? text.slice(0, 500).replace(/[^.!?]*$/, "") || text.slice(0, 500)
+        : text;
+      const blob = await synthesizeSpeech(truncated);
+      const url = URL.createObjectURL(blob);
+      audioUrlRef.current = url;
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { setSpeakingIdx(null); cleanupAudio(); };
+      audio.onerror = () => { setSpeakingIdx(null); cleanupAudio(); };
+      await audio.play();
+      setSpeakingIdx(messageIdx);
+    } catch (err) {
+      console.error("TTS error:", err);
+    } finally {
+      setTtsLoading(null);
+    }
+  };
+
+  useEffect(() => {
+    return () => { stopSpeaking(); };
+  }, [stopSpeaking]);
 
   // Send a message
   const handleSend = async (text?: string) => {
@@ -315,7 +419,14 @@ export function AiChatbot() {
 
           {/* Chat messages */}
           {messages.map((msg, i) => (
-            <ChatBubble key={i} message={msg} />
+            <ChatBubble
+              key={i}
+              message={msg}
+              messageIdx={i}
+              speakingIdx={speakingIdx}
+              ttsLoading={ttsLoading}
+              onSpeak={handleSpeak}
+            />
           ))}
 
           {/* Typing indicator */}
