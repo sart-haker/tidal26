@@ -44,6 +44,26 @@ def normalize_dataframe(df: pd.DataFrame, year: int) -> pd.DataFrame:
     return df
 
 
+def normalize_uploaded_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    mapping = get_column_mapping("upload")
+    rename_map = {k: v for k, v in mapping.items() if k in df.columns}
+    df = df.rename(columns=rename_map)
+    df["event_type_normalized"] = df["event_type"].apply(normalize_event_type)
+    df["is_reference"] = df["event_type_normalized"].apply(is_reference_point)
+    df["is_anomaly"] = df["event_type_normalized"].apply(is_anomaly)
+    df["clock_decimal"] = df["clock_position"].apply(parse_clock_position)
+    df["log_distance"] = pd.to_numeric(df["log_distance"], errors="coerce")
+    if "depth_percent" in df.columns:
+        df["depth_percent"] = pd.to_numeric(df["depth_percent"], errors="coerce")
+    for col in ["length", "width"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    if "joint_number" in df.columns:
+        df["joint_number"] = pd.to_numeric(df["joint_number"], errors="coerce")
+    df["original_index"] = df.index
+    return df
+
+
 def load_and_normalize(data_dir: str) -> dict[int, pd.DataFrame]:
     datasets = {}
     for year in [2007, 2015, 2022]:

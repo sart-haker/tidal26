@@ -10,10 +10,14 @@ import {
   Link2,
   Blocks,
   Activity,
+  Upload,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/upload", label: "Upload & Analyze", icon: Upload },
+  { href: "/results", label: "Results", icon: FileText },
   { href: "/anomalies", label: "Anomaly Matching", icon: GitCompare },
   { href: "/growth", label: "Growth Analysis", icon: TrendingUp },
   { href: "/welds", label: "Weld Alignment", icon: Link2 },
