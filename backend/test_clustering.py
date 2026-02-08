@@ -14,7 +14,7 @@ import numpy as np
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from clustering.cluster_detector import AnomalyClusterDetector
+from src.clustering.cluster_detector import AnomalyClusterDetector
 
 
 def test_clock_position_parsing():
@@ -108,7 +108,7 @@ def test_critical_criteria():
     results = []
     
     for year in [2007, 2015, 2022]:
-        stats_file = f'output/{year}_cluster_stats.csv'
+        stats_file = f'output/clustering/{year}_cluster_stats.csv'
         if not os.path.exists(stats_file):
             print(f"  ⚠ Skipping {year} - output file not found")
             continue
@@ -202,10 +202,10 @@ def test_output_files():
     expected_files = []
     for year in [2007, 2015, 2022]:
         expected_files.extend([
-            f'output/{year}_clustered_anomalies.csv',
-            f'output/{year}_cluster_stats.csv',
-            f'output/{year}_cluster_map.png',
-            f'output/{year}_cluster_severity.png'
+            f'output/clustering/{year}_clustered_anomalies.csv',
+            f'output/clustering/{year}_cluster_stats.csv',
+            f'output/clustering/{year}_cluster_map.png',
+            f'output/clustering/{year}_cluster_severity.png'
         ])
     
     results = []
