@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     # Gemini AI
     GEMINI_API_KEY: str = ""
 
+    # ElevenLabs TTS
+    ELEVENLABS_API_KEY: str = ""
+    ELEVENLABS_VOICE_ID: str = "pNInz6obpgDQGcFmaJgB"
+
     # App
     APP_NAME: str = "TIDAL26 Pipeline Integrity API"
     DEBUG: bool = False
