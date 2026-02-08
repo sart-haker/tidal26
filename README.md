@@ -1,4 +1,4 @@
-# TIDAL26 — Pipeline Integrity Analysis System
+# PenguinPipe — Pipeline ILI Analysis & Prediction System
 
 A complete pipeline In-Line Inspection (ILI) data analysis system that aligns multi-year inspection data, detects anomaly interaction zones, predicts future corrosion locations and growth rates using machine learning.
 
