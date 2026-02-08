@@ -8,11 +8,13 @@ import {
   Blocks,
   Activity,
   Upload,
+  BarChart3,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: LayoutDashboard },
   { href: "/upload", label: "Upload & Analyze", icon: Upload },
+  { href: "/results", label: "Results", icon: BarChart3 },
   { href: "/playground", label: "Playground", icon: Blocks },
 ];
 
