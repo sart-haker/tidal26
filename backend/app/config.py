@@ -15,7 +15,10 @@ class Settings(BaseSettings):
     JWT_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
     # CORS
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "https://penguin-pipe-t5nz8.ondigitalocean.app",
+    ]
 
     # Gemini AI
     GEMINI_API_KEY: str = ""
