@@ -39,7 +39,7 @@ export function PieChartComponent({
           label={(props: PieLabelRenderProps) =>
             `${props.name ?? ""} ${(((props.percent as number) ?? 0) * 100).toFixed(0)}%`
           }
-          labelLine={{ stroke: "#565A75" }}
+          labelLine={{ stroke: "#A0B4C8" }}
         >
           {data.map((entry, i) => (
             <Cell key={i} fill={entry.color} />
@@ -47,7 +47,7 @@ export function PieChartComponent({
         </Pie>
         <Tooltip content={<ChartTooltip />} />
         <Legend
-          wrapperStyle={{ fontSize: 12, color: "#8B8FA8" }}
+          wrapperStyle={{ fontSize: 12, color: "#D0DEE8" }}
           formatter={(value) => (
             <span className="text-text-secondary">{value}</span>
           )}

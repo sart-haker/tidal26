@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const footerLinks = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "Dashboard", href: "/upload" },
-    { label: "Results", href: "/results" },
+    { label: "Analysis", href: "#analysis" },
+    { label: "Upload", href: "#upload" },
+    { label: "Back to Top", href: "#hero" },
   ],
   Resources: [
     { label: "Documentation", href: "#" },
@@ -43,7 +43,7 @@ export function Footer({ className }: FooterProps) {
         >
           <path
             d="M0,60 C150,100 350,0 600,60 C850,120 1050,20 1200,60 L1200,120 L0,120 Z"
-            fill="#0f172a"
+            fill="#D0DCE8"
           />
         </svg>
       </div>

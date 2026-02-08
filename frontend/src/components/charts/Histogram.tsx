@@ -50,30 +50,30 @@ export function Histogram({
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={binData}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#252945" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#D0DCE8" />
         <XAxis
           dataKey="bin"
-          stroke="#565A75"
-          tick={{ fill: "#8B8FA8", fontSize: 11 }}
+          stroke="#A0B4C8"
+          tick={{ fill: "#D0DEE8", fontSize: 11 }}
           tickLine={false}
           label={
             xLabel
-              ? { value: xLabel, position: "insideBottom", offset: -5, fill: "#8B8FA8", fontSize: 12 }
+              ? { value: xLabel, position: "insideBottom", offset: -5, fill: "#D0DEE8", fontSize: 12 }
               : undefined
           }
         />
         <YAxis
-          stroke="#565A75"
-          tick={{ fill: "#8B8FA8", fontSize: 12 }}
+          stroke="#A0B4C8"
+          tick={{ fill: "#D0DEE8", fontSize: 12 }}
           tickLine={false}
           label={
             yLabel
-              ? { value: yLabel, angle: -90, position: "insideLeft", fill: "#8B8FA8", fontSize: 12 }
+              ? { value: yLabel, angle: -90, position: "insideLeft", fill: "#D0DEE8", fontSize: 12 }
               : undefined
           }
         />
         <Tooltip content={<ChartTooltip />} />
-        <Bar dataKey="count" name="Count" fill={color} radius={[4, 4, 0, 0]} />
+        <Bar dataKey="count" name="Count" fill={color} radius={[8, 8, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

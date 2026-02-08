@@ -21,9 +21,9 @@ export function computeSummaryStats(data: RunData) {
 
 export function getMatchDistribution(data: RunData) {
   return [
-    { name: "Matched", value: data.matched.length, color: "#10B981" },
-    { name: "New", value: data.newAnomalies.length, color: "#3B82F6" },
-    { name: "Missing", value: data.missing.length, color: "#8B5CF6" },
+    { name: "Matched", value: data.matched.length, color: "#66BB9A" },
+    { name: "New", value: data.newAnomalies.length, color: "#8EC5E8" },
+    { name: "Missing", value: data.missing.length, color: "#B39DDB" },
   ];
 }
 

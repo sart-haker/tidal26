@@ -47,7 +47,7 @@ export function DonutChart({
         </Pie>
         <Tooltip content={<ChartTooltip />} />
         <Legend
-          wrapperStyle={{ fontSize: 12, color: "#8B8FA8" }}
+          wrapperStyle={{ fontSize: 12, color: "#D0DEE8" }}
           formatter={(value) => (
             <span className="text-text-secondary">{value}</span>
           )}
