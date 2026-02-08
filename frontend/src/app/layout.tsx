@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Luckiest_Guy } from "next/font/google";
+import { Geist, Geist_Mono, DynaPuff } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/Tooltip";
 import { AiChatbot } from "@/components/ai/AiChatbot";
 import "./globals.css";
@@ -14,9 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const luckiestGuy = Luckiest_Guy({
-  variable: "--font-luckiest-guy",
-  weight: "400",
+const dynaPuff = DynaPuff({
+  variable: "--font-dynapuff",
   subsets: ["latin"],
 });
 
@@ -34,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${luckiestGuy.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${dynaPuff.variable} antialiased`}
       >
         <TooltipProvider>
           {children}

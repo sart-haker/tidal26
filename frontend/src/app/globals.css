@@ -5,24 +5,24 @@
   --color-foreground: #E0EAF2;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-bubble: var(--font-luckiest-guy);
+  --font-bubble: var(--font-dynapuff);
 
   /* Surface colors */
-  --color-surface: rgba(240, 245, 250, 0.65);
-  --color-surface-hover: rgba(245, 248, 252, 0.8);
+  --color-surface: rgba(240, 245, 250, 0.75);
+  --color-surface-hover: rgba(245, 248, 252, 0.85);
 
   /* Border colors */
-  --color-border: rgba(180, 200, 220, 0.4);
-  --color-border-bright: rgba(180, 200, 220, 0.6);
+  --color-border: rgba(180, 200, 220, 0.5);
+  --color-border-bright: rgba(180, 200, 220, 0.7);
 
   /* Text colors */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #E0EAF2;
-  --color-text-muted: #B8CDE0;
+  --color-text-primary: #1E3A52;
+  --color-text-secondary: #2E5470;
+  --color-text-muted: #5A7A94;
   --color-text-dark: #1E3A52;
 
   /* Accent colors */
-  --color-accent-primary: #6B7FA3;
+  --color-accent-primary: #4A6180;
   --color-accent-light: #8BA3C4;
   --color-accent-blue: #5B8DB8;
   --color-accent-purple: #A78BFA;
@@ -48,7 +48,9 @@ body {
 
 /* Font utilities */
 .font-bubble {
-  font-family: var(--font-bubble), cursive;
+  font-family: var(--font-dynapuff), cursive;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(30, 58, 82, 0.15);
 }
 
 /* Scrollbar styling */
