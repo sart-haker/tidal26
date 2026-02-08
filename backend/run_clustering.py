@@ -32,13 +32,13 @@ def main():
     """Main execution function."""
     
     # Ensure output directory exists
-    output_dir = 'output'
+    output_dir = os.path.join(os.path.dirname(__file__), 'output')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         print(f"Created output directory: {output_dir}/")
     
     # Data directory
-    data_dir = '../data'
+    data_dir = os.path.join(os.path.dirname(__file__), 'data')
     
     # Years to process
     years = [2007, 2015, 2022]

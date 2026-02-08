@@ -147,7 +147,7 @@ def run_all_comparisons(data_dir: str, output_dir: str):
 
 if __name__ == "__main__":
     data_dir = os.path.join(os.path.dirname(__file__), "..", "data")
-    output_dir = os.path.join(os.path.dirname(__file__), "output")
+    output_dir = os.path.join(os.path.dirname(__file__), "..", "output")
 
     if len(sys.argv) >= 3:
         run1 = int(sys.argv[1])
