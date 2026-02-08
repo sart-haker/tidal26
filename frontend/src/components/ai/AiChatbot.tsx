@@ -25,7 +25,7 @@ function ChatBubble({ message }: { message: AiChatMessage }) {
       {!isUser && (
         <div className="shrink-0 mt-1">
           <Image
-            src="/tidalicon_3.png"
+            src="/snowman-v4.png"
             alt="TIDAL AI"
             width={28}
             height={28}
@@ -189,30 +189,26 @@ export function AiChatbot() {
 
   return (
     <>
-      {/* ── Floating penguin button ────────────────────────────────── */}
+      {/* ── Floating snowman button ───────────────────────────────── */}
       <button
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 group",
-          "h-16 w-16 rounded-full",
-          "bg-gradient-to-br from-[#6B7FA3] to-[#4A6180]",
-          "shadow-lg shadow-[#4A6180]/40 hover:shadow-xl hover:shadow-[#4A6180]/50",
-          "border-2 border-white/20 hover:border-white/30",
-          "transition-all duration-300 hover:scale-105 active:scale-95",
-          "flex items-center justify-center overflow-hidden",
+          "fixed bottom-4 right-4 z-50 group",
+          "h-20 w-20",
+          "transition-all duration-300 hover:scale-110 active:scale-95",
+          "flex items-center justify-center",
+          "drop-shadow-lg hover:drop-shadow-xl",
           open && "scale-0 opacity-0 pointer-events-none"
         )}
         aria-label="Open AI Chat"
       >
         <Image
-          src="/tidalicon_3.png"
-          alt="TIDAL AI Penguin"
-          width={48}
-          height={48}
-          className="object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+          src="/snowman-v4.png"
+          alt="TIDAL AI Snowman"
+          width={80}
+          height={80}
+          className="object-contain group-hover:brightness-110 transition-all duration-300"
         />
-        {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping opacity-30" />
       </button>
 
       {/* ── Chat panel ─────────────────────────────────────────────── */}
@@ -235,7 +231,7 @@ export function AiChatbot() {
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface/60 backdrop-blur-sm shrink-0">
           <Image
-            src="/tidalicon_3.png"
+            src="/snowman-v4.png"
             alt="TIDAL AI"
             width={32}
             height={32}
@@ -275,7 +271,7 @@ export function AiChatbot() {
           {messages.length === 0 && (
             <div className="flex flex-col items-center text-center pt-6 pb-2 space-y-4">
               <Image
-                src="/tidalicon_3.png"
+                src="/snowman-v4.png"
                 alt="TIDAL AI"
                 width={64}
                 height={64}
@@ -327,7 +323,7 @@ export function AiChatbot() {
             <div className="flex gap-2 items-start">
               <div className="shrink-0 mt-1">
                 <Image
-                  src="/tidalicon_3.png"
+                  src="/snowman-v4.png"
                   alt="TIDAL AI"
                   width={28}
                   height={28}

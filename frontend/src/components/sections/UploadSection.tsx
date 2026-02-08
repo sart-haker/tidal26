@@ -104,7 +104,7 @@ export function UploadSection() {
           />
         </div>
 
-        <h2 className="font-bubble text-3xl md:text-4xl text-text-primary mb-8 text-center">
+        <h2 className="font-bubble text-3xl md:text-4xl mb-8 text-center">
           Upload Dataset
         </h2>
 

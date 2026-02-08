@@ -20,13 +20,13 @@ export function HeroSection() {
 
       {/* Main content */}
       <div className="text-center max-w-2xl relative z-10">
-        <h1 className="font-bubble text-5xl md:text-7xl text-text-primary mb-4 drop-shadow-sm">
+        <h1 className="font-bubble text-5xl md:text-7xl mb-4 drop-shadow-sm">
           RCP Track
         </h1>
-        <p className="text-xl md:text-2xl text-text-secondary font-medium mb-6">
+        <p className="text-xl md:text-2xl text-white/90 font-medium mb-6">
           Pipeline ILI Anomaly Tracking &amp; Analysis
         </p>
-        <p className="text-text-muted leading-relaxed max-w-lg mx-auto">
+        <p className="text-white/70 leading-relaxed max-w-lg mx-auto">
           Track pipeline anomalies across 2007, 2015, and 2022 inspection runs.
           Identify interaction zones, assess structural integrity risks, and
           prioritize maintenance with advanced data alignment and ML predictions.
@@ -36,7 +36,7 @@ export function HeroSection() {
       {/* Scroll indicator */}
       <a
         href="#analysis"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-text-muted hover:text-text-secondary transition-colors animate-bounce"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 hover:text-white/80 transition-colors animate-bounce"
         aria-label="Scroll to analysis"
       >
         <ChevronDown className="h-8 w-8" />

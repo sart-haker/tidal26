@@ -80,7 +80,7 @@ export function AnalysisSection() {
         {/* Section header */}
         <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <div className="flex items-center gap-4">
-            <h2 className="font-bubble text-3xl md:text-4xl text-text-primary">
+            <h2 className="font-bubble text-3xl md:text-4xl">
               Pipeline Analysis
             </h2>
             {/* Penguin decoration */}
