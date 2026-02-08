@@ -1,0 +1,138 @@
+{
+  "train": {
+    "accuracy": 0.9839929639401935,
+    "precision": 0.996268656716418,
+    "recall": 0.9394792399718508,
+    "f1": 0.9670409272002898,
+    "roc_auc": 0.9991242987458294
+  },
+  "validation": {
+    "accuracy": 0.9472573839662447,
+    "precision": 0.9488817891373802,
+    "recall": 0.8342696629213483,
+    "f1": 0.8878923766816144,
+    "roc_auc": 0.975230305457765
+  },
+  "feature_importance": [
+    {
+      "feature": "anomaly_density_100ft",
+      "importance": 0.3489454997546357
+    },
+    {
+      "feature": "anomaly_density_50ft",
+      "importance": 0.1795328838292372
+    },
+    {
+      "feature": "dist_to_nearest_anomaly",
+      "importance": 0.11222094744536362
+    },
+    {
+      "feature": "elevation",
+      "importance": 0.08492213087398351
+    },
+    {
+      "feature": "dist_to_tee",
+      "importance": 0.06903883676950244
+    },
+    {
+      "feature": "dist_to_bend",
+      "importance": 0.06391046956335375
+    },
+    {
+      "feature": "dist_to_support",
+      "importance": 0.0489243757571591
+    },
+    {
+      "feature": "dist_to_attachment",
+      "importance": 0.03902569464009548
+    },
+    {
+      "feature": "elevation_rolling_mean",
+      "importance": 0.015536160809175368
+    },
+    {
+      "feature": "elevation_slope",
+      "importance": 0.007672263977387488
+    },
+    {
+      "feature": "elevation_rolling_std",
+      "importance": 0.007218203008947611
+    },
+    {
+      "feature": "dist_to_girth_weld",
+      "importance": 0.007185626577811976
+    },
+    {
+      "feature": "clock_decimal",
+      "importance": 0.00590166154714931
+    },
+    {
+      "feature": "distance_from_6_oclock",
+      "importance": 0.004203915574911033
+    },
+    {
+      "feature": "min_dist_to_weld",
+      "importance": 0.0018797619407656184
+    },
+    {
+      "feature": "is_thin_wall",
+      "importance": 0.0014052663014084946
+    },
+    {
+      "feature": "in_weld_vicinity",
+      "importance": 0.0010855610822329918
+    },
+    {
+      "feature": "wall_thickness",
+      "importance": 0.0005877561255785371
+    },
+    {
+      "feature": "period",
+      "importance": 0.0004130401789772187
+    },
+    {
+      "feature": "is_bottom_half",
+      "importance": 0.00033916104000191377
+    },
+    {
+      "feature": "is_top_half",
+      "importance": 3.720726184036753e-05
+    },
+    {
+      "feature": "bend_angle",
+      "importance": 1.2213249046299921e-05
+    },
+    {
+      "feature": "high_stress_indicator",
+      "importance": 1.362691435089104e-06
+    },
+    {
+      "feature": "is_sag",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_left",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_right",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_under",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_over",
+      "importance": 0.0
+    },
+    {
+      "feature": "dist_to_valve",
+      "importance": 0.0
+    },
+    {
+      "feature": "years_between",
+      "importance": 0.0
+    }
+  ]
+}

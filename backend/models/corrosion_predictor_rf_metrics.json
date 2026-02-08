@@ -1,0 +1,138 @@
+{
+  "train": {
+    "accuracy": 0.9379067722075638,
+    "precision": 0.8792613636363636,
+    "recall": 0.8712174524982407,
+    "f1": 0.8752209261223047,
+    "roc_auc": 0.9805003809118912
+  },
+  "validation": {
+    "accuracy": 0.9142053445850914,
+    "precision": 0.8421052631578947,
+    "recall": 0.8089887640449438,
+    "f1": 0.8252148997134671,
+    "roc_auc": 0.954850644012058
+  },
+  "feature_importance": [
+    {
+      "feature": "anomaly_density_100ft",
+      "importance": 0.21805182080573632
+    },
+    {
+      "feature": "anomaly_density_50ft",
+      "importance": 0.18449601717098155
+    },
+    {
+      "feature": "dist_to_nearest_anomaly",
+      "importance": 0.17469238718034427
+    },
+    {
+      "feature": "elevation",
+      "importance": 0.08871034410310305
+    },
+    {
+      "feature": "dist_to_tee",
+      "importance": 0.06324411568833314
+    },
+    {
+      "feature": "dist_to_attachment",
+      "importance": 0.051053441578692606
+    },
+    {
+      "feature": "dist_to_bend",
+      "importance": 0.048299377416437694
+    },
+    {
+      "feature": "dist_to_support",
+      "importance": 0.04475136176505687
+    },
+    {
+      "feature": "dist_to_girth_weld",
+      "importance": 0.03169405770413745
+    },
+    {
+      "feature": "elevation_slope",
+      "importance": 0.019388774340407065
+    },
+    {
+      "feature": "elevation_rolling_mean",
+      "importance": 0.019144343888892343
+    },
+    {
+      "feature": "elevation_rolling_std",
+      "importance": 0.015402731446623871
+    },
+    {
+      "feature": "clock_decimal",
+      "importance": 0.012485987669603954
+    },
+    {
+      "feature": "distance_from_6_oclock",
+      "importance": 0.010828639447220683
+    },
+    {
+      "feature": "high_stress_indicator",
+      "importance": 0.0051409211881139685
+    },
+    {
+      "feature": "period",
+      "importance": 0.003192948521972566
+    },
+    {
+      "feature": "is_bottom_half",
+      "importance": 0.001770195314797776
+    },
+    {
+      "feature": "min_dist_to_weld",
+      "importance": 0.0017453371475291172
+    },
+    {
+      "feature": "in_weld_vicinity",
+      "importance": 0.0017142128608836282
+    },
+    {
+      "feature": "years_between",
+      "importance": 0.001693484701533104
+    },
+    {
+      "feature": "is_thin_wall",
+      "importance": 0.0012147878416494996
+    },
+    {
+      "feature": "wall_thickness",
+      "importance": 0.0009063928273313544
+    },
+    {
+      "feature": "is_top_half",
+      "importance": 0.00035795029712174756
+    },
+    {
+      "feature": "bend_angle",
+      "importance": 2.03690934962992e-05
+    },
+    {
+      "feature": "is_right",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_left",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_sag",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_under",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_over",
+      "importance": 0.0
+    },
+    {
+      "feature": "dist_to_valve",
+      "importance": 0.0
+    }
+  ]
+}
