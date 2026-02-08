@@ -1,29 +1,32 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0B0D17;
-  --color-foreground: #EAEDF6;
+  --color-background: #9BB5CA;
+  --color-foreground: #2C4A6B;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-bubble: var(--font-luckiest-guy);
 
   /* Surface colors */
-  --color-surface: #131525;
-  --color-surface-hover: #1A1D35;
+  --color-surface: rgba(180, 200, 220, 0.4);
+  --color-surface-hover: rgba(180, 200, 220, 0.6);
 
   /* Border colors */
-  --color-border: #252945;
-  --color-border-bright: #3B3F6B;
+  --color-border: rgba(255, 255, 255, 0.3);
+  --color-border-bright: rgba(255, 255, 255, 0.5);
 
   /* Text colors */
-  --color-text-primary: #EAEDF6;
-  --color-text-secondary: #8B8FA8;
-  --color-text-muted: #565A75;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #2C4A6B;
+  --color-text-muted: #4A6A8A;
+  --color-text-dark: #2C4A6B;
 
   /* Accent colors */
-  --color-accent-primary: #7C5CFC;
-  --color-accent-light: #A78BFA;
-  --color-accent-blue: #3B82F6;
-  --color-accent-cyan: #06B6D4;
+  --color-accent-primary: #7A2B2B;
+  --color-accent-light: #9B3C3C;
+  --color-accent-blue: #3B6EA8;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-cyan: #06b6d4;
 
   /* Status colors */
   --color-status-critical: #EF4444;
@@ -31,12 +34,21 @@
   --color-status-success: #10B981;
   --color-status-info: #6366F1;
   --color-status-missing: #8B5CF6;
+
+  /* Light backgrounds */
+  --color-bg-light: #C8D6E1;
+  --color-bg-lighter: #D4DEE5;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Font utilities */
+.font-bubble {
+  font-family: var(--font-bubble), cursive;
 }
 
 /* Scrollbar styling */
