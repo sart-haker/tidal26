@@ -138,6 +138,28 @@ export interface SchemaInfo {
   description: Record<string, string>;
 }
 
+// === AI / Gemini Types ===
+
+export interface InsightItem {
+  category: string;
+  title: string;
+  detail: string;
+  severity: "critical" | "warning" | "info";
+}
+
+export interface AiAnalysis {
+  summary: string;
+  insights: InsightItem[];
+  recommendations: string[];
+  comparison: string;
+}
+
+export interface AiChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  sources?: string[];
+}
+
 // === UI Component Types ===
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "tidal-primary" | "tidal-outline";
