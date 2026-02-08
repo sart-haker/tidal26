@@ -1,59 +1,105 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
 import { FileUpload } from "@/components/upload/FileUpload";
-import { AlertCircle, CheckCircle2, Database } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Database,
+  Loader2,
+  BarChart3,
+  ArrowRight,
+} from "lucide-react";
+import {
+  uploadInspection,
+  getOrCreateDefaultPipeline,
+  listInspections,
+  runMatching,
+  getEnrichedResults,
+  runClustering,
+  getClusterResults,
+  runPredictions,
+  getPredictionResults,
+} from "@/lib/api-client";
+import type { InspectionResponse } from "@/lib/api-client";
+import type { RunData } from "@/lib/data";
+import type { ClusterStats, PredictionResult } from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-
-interface StoredDataset {
-  id: string;
-  name: string;
-  year: number;
-  filename: string;
-  row_count: number;
-  columns: string[];
-  created_at: string;
+export interface DynamicResult {
+  runData: RunData;
+  run1Year: number;
+  run2Year: number;
+  clusterData?: ClusterStats[];
+  predictionData?: PredictionResult[];
 }
 
-export function UploadSection() {
+interface UploadSectionProps {
+  onAnalysisComplete?: (result: DynamicResult) => void;
+}
+
+export function UploadSection({ onAnalysisComplete }: UploadSectionProps) {
+  // Pipeline state
+  const [pipelineId, setPipelineId] = useState<string | null>(null);
+  const [inspections, setInspections] = useState<InspectionResponse[]>([]);
+
+  // Upload form state
   const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState("");
   const [year, setYear] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<StoredDataset | null>(null);
-  const [datasets, setDatasets] = useState<StoredDataset[]>([]);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  useEffect(() => {
-    loadDatasets();
-  }, []);
+  // Comparison state (for stored inspections)
+  const [compareRun1, setCompareRun1] = useState("");
+  const [compareRun2, setCompareRun2] = useState("");
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisSummary, setAnalysisSummary] = useState<{
+    matched: number;
+    newCount: number;
+    missingCount: number;
+    critical: number;
+  } | null>(null);
 
-  async function loadDatasets() {
+  const loadInspections = useCallback(async () => {
+    if (!pipelineId) return;
     try {
-      const res = await fetch(`${API_BASE}/datasets`);
-      if (res.ok) setDatasets(await res.json());
+      const items = await listInspections(pipelineId);
+      setInspections(items);
     } catch {
       // ignore — backend might not be running
     }
-  }
+  }, [pipelineId]);
 
+  // Initialize pipeline + load inspections
+  useEffect(() => {
+    (async () => {
+      try {
+        const pipeline = await getOrCreateDefaultPipeline();
+        setPipelineId(pipeline.id);
+      } catch {
+        // backend not available
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    loadInspections();
+  }, [loadInspections]);
+
+  // ── Upload handler ──
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
+    setUploadSuccess(false);
 
-    if (!name.trim()) {
-      setError("Enter a dataset name");
-      return;
-    }
     if (!file) {
-      setError("Select a CSV file");
+      setError("Select a CSV or Excel file");
       return;
     }
     if (!year) {
@@ -63,27 +109,13 @@ export function UploadSection() {
 
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("name", name.trim());
-      formData.append("year", year);
-
-      const res = await fetch(`${API_BASE}/datasets`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || "Upload failed");
-      }
-
-      const result = await res.json();
-      setSuccess(result);
+      await uploadInspection(Number(year), file);
       setFile(null);
-      setName("");
       setYear("");
-      loadDatasets();
+      setUploadSuccess(true);
+      await loadInspections();
+      // Auto-dismiss success after 4s
+      setTimeout(() => setUploadSuccess(false), 4000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -91,10 +123,77 @@ export function UploadSection() {
     }
   }
 
+  // ── Analysis handler (from stored inspections) ──
+  async function handleRunAnalysis() {
+    if (!pipelineId || !compareRun1 || !compareRun2) return;
+
+    setError(null);
+    setAnalyzing(true);
+    setAnalysisSummary(null);
+
+    try {
+      const insp1 = inspections.find((i) => i.id === compareRun1);
+      const insp2 = inspections.find((i) => i.id === compareRun2);
+      if (!insp1 || !insp2) throw new Error("Inspection not found");
+
+      // run1 = earlier year, run2 = later year
+      const [earlier, later] =
+        insp1.year <= insp2.year ? [insp1, insp2] : [insp2, insp1];
+
+      const summary = await runMatching(pipelineId, earlier.id, later.id);
+      const runData = await getEnrichedResults(earlier.id, later.id);
+
+      let clusterData: ClusterStats[] | undefined;
+      try {
+        await runClustering(later.id);
+        clusterData = await getClusterResults(later.id);
+      } catch {
+        // clustering may fail — ok
+      }
+
+      // Run ML predictions on the later (newer) inspection
+      let predictionData: PredictionResult[] | undefined;
+      try {
+        await runPredictions(later.id);
+        predictionData = await getPredictionResults(later.id);
+      } catch {
+        // predictions may fail if model not available — ok
+      }
+
+      setAnalysisSummary({
+        matched: summary.total_matched,
+        newCount: summary.new_anomalies,
+        missingCount: summary.missing_anomalies,
+        critical: summary.critical_growth_count,
+      });
+
+      onAnalysisComplete?.({
+        runData,
+        run1Year: earlier.year,
+        run2Year: later.year,
+        clusterData,
+        predictionData,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Analysis failed");
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
+  // Build dropdown options for comparison selects
+  const inspectionOptions = inspections.map((i) => ({
+    value: i.id,
+    label: `${i.year} — ${i.anomaly_count} anomalies (${i.filename})`,
+  }));
+
+  const canRunAnalysis =
+    compareRun1 && compareRun2 && compareRun1 !== compareRun2 && !analyzing;
+
   return (
     <section id="upload" className="relative px-6 py-16 scroll-mt-8">
       <div className="mx-auto max-w-3xl relative">
-        {/* Penguin decoration - skiing penguin */}
+        {/* Penguin decoration */}
         <div className="hidden md:block absolute -left-40 top-12 pointer-events-none select-none opacity-90 -rotate-6">
           <Image
             src="/tidalicon_2.png"
@@ -105,22 +204,17 @@ export function UploadSection() {
         </div>
 
         <h2 className="font-bubble text-3xl md:text-4xl text-text-primary mb-8 text-center">
-          Upload Dataset
+          Upload &amp; Analyze
         </h2>
 
+        {/* ── Upload Form ── */}
         <form onSubmit={handleUpload} className="space-y-4">
           <Card title="Dataset Info">
             <div className="space-y-4">
               <Input
-                label="Dataset Name"
-                placeholder="e.g. 2015 Inspection Run"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <Input
                 label="Inspection Year"
                 type="number"
-                placeholder="e.g. 2015"
+                placeholder="e.g. 2030"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
               />
@@ -136,32 +230,6 @@ export function UploadSection() {
             />
           </Card>
 
-          {error && (
-            <Card>
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-4 w-4 shrink-0 text-status-critical" />
-                <p className="text-sm text-status-critical">{error}</p>
-              </div>
-            </Card>
-          )}
-
-          {success && (
-            <Card>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-status-success" />
-                <div>
-                  <p className="text-sm font-medium text-status-success">
-                    Stored in MongoDB
-                  </p>
-                  <p className="mt-1 text-xs text-text-muted">
-                    {success.row_count} rows &middot; {success.columns.length}{" "}
-                    columns &middot; ID: {success.id}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          )}
-
           <Button
             type="submit"
             variant="primary"
@@ -173,20 +241,47 @@ export function UploadSection() {
           </Button>
         </form>
 
-        <div className="mt-6">
+        {/* ── Upload success ── */}
+        {uploadSuccess && (
+          <div className="mt-4">
+            <Card>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-status-success" />
+                <p className="text-sm font-medium text-status-success">
+                  Upload complete — select it below to run analysis
+                </p>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ── Error display ── */}
+        {error && (
+          <div className="mt-4">
+            <Card>
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-4 w-4 shrink-0 text-status-critical" />
+                <p className="text-sm text-status-critical">{error}</p>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ── Stored Inspections + Compare ── */}
+        <div className="mt-6 space-y-4">
           <Card
-            title="Stored Datasets"
-            subtitle={`${datasets.length} datasets in MongoDB`}
+            title="Stored Inspections"
+            subtitle={`${inspections.length} inspections in MongoDB`}
           >
-            {datasets.length === 0 ? (
+            {inspections.length === 0 ? (
               <p className="text-sm text-text-muted py-4 text-center">
-                No datasets uploaded yet
+                No inspections uploaded yet
               </p>
             ) : (
               <div className="space-y-3">
-                {datasets.map((ds) => (
+                {inspections.map((insp) => (
                   <div
-                    key={ds.id}
+                    key={insp.id}
                     className="flex items-center justify-between rounded-lg border border-border p-3"
                   >
                     <div className="flex items-center gap-3">
@@ -194,24 +289,100 @@ export function UploadSection() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-text-primary">
-                            {ds.name}
+                            {insp.filename}
                           </p>
-                          <Badge variant="matched">{ds.year}</Badge>
+                          <Badge variant="matched">{insp.year}</Badge>
                         </div>
                         <p className="text-xs text-text-muted">
-                          {ds.row_count} rows &middot; {ds.filename} &middot;{" "}
-                          {new Date(ds.created_at).toLocaleDateString()}
+                          {insp.anomaly_count} anomalies &middot;{" "}
+                          {insp.total_records} records &middot;{" "}
+                          {new Date(insp.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
                     <p className="text-xs font-mono text-text-muted">
-                      {ds.id.slice(0, 8)}...
+                      {insp.id.slice(0, 8)}...
                     </p>
                   </div>
                 ))}
               </div>
             )}
           </Card>
+
+          {/* ── Compare & Analyze ── */}
+          {inspections.length >= 2 && (
+            <Card title="Compare & Analyze">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <Select
+                      label="Run 1 (earlier)"
+                      options={[
+                        { value: "", label: "Select inspection..." },
+                        ...inspectionOptions,
+                      ]}
+                      value={compareRun1}
+                      onChange={(e) => setCompareRun1(e.target.value)}
+                    />
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-text-muted mt-6 shrink-0" />
+                  <div className="flex-1">
+                    <Select
+                      label="Run 2 (later)"
+                      options={[
+                        { value: "", label: "Select inspection..." },
+                        ...inspectionOptions.filter(
+                          (o) => o.value !== compareRun1
+                        ),
+                      ]}
+                      value={compareRun2}
+                      onChange={(e) => setCompareRun2(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {analyzing && (
+                  <div className="flex items-center justify-center gap-3 py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-accent-blue" />
+                    <p className="text-sm text-text-muted">
+                      Matching anomalies, calculating growth rates, and
+                      clustering...
+                    </p>
+                  </div>
+                )}
+
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  disabled={!canRunAnalysis}
+                  loading={analyzing}
+                  onClick={handleRunAnalysis}
+                >
+                  {analyzing ? "Analyzing..." : "Run Analysis"}
+                </Button>
+
+                {/* Analysis result summary */}
+                {analysisSummary && !analyzing && (
+                  <div className="flex items-center gap-3 rounded-lg border border-status-success/30 bg-status-success/10 p-3">
+                    <BarChart3 className="h-5 w-5 shrink-0 text-status-success" />
+                    <div>
+                      <p className="text-sm font-medium text-status-success">
+                        Analysis Complete
+                      </p>
+                      <p className="mt-1 text-xs text-text-muted">
+                        {analysisSummary.matched} matched &middot;{" "}
+                        {analysisSummary.newCount} new &middot;{" "}
+                        {analysisSummary.missingCount} missing &middot;{" "}
+                        {analysisSummary.critical} critical — scroll up to view
+                        results
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </section>

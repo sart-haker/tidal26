@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 // UI
@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 
 // Data
+import type { RunData } from "@/lib/data";
 import { getRunData, getClusterData, getPredictions } from "@/lib/data";
 import {
   computeSummaryStats,
@@ -52,8 +53,10 @@ import {
   getPredictionSummary,
 } from "@/lib/data/aggregations";
 import { RUN_PAIRS } from "@/lib/constants";
+import type { ClusterStats, PredictionResult } from "@/lib/types";
+import type { DynamicResult } from "./UploadSection";
 
-const tabs = [
+const ALL_TABS = [
   { key: "overview", label: "Overview" },
   { key: "matched", label: "Matched Anomalies" },
   { key: "exceptions", label: "New & Missing" },
@@ -61,18 +64,76 @@ const tabs = [
   { key: "predictions", label: "ML Predictions" },
 ];
 
-const pairOptions = RUN_PAIRS.map((p) => ({
-  value: `${p.run1}-${p.run2}`,
-  label: p.label,
-}));
+const TABS_NO_PREDICTIONS = ALL_TABS.filter((t) => t.key !== "predictions");
 
-export function AnalysisSection() {
+const DYNAMIC_PAIR_VALUE = "dynamic";
+
+interface AnalysisSectionProps {
+  dynamicResult?: DynamicResult | null;
+}
+
+export function AnalysisSection({ dynamicResult }: AnalysisSectionProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedPair, setSelectedPair] = useState("2015-2022");
 
-  const [run1, run2] = selectedPair.split("-").map(Number);
-  const data = getRunData(run1, run2);
+  const isDynamic = selectedPair === DYNAMIC_PAIR_VALUE && !!dynamicResult;
+
+  // Build dropdown options: static pairs + dynamic (if available)
+  const pairOptions = [
+    ...RUN_PAIRS.map((p) => ({
+      value: `${p.run1}-${p.run2}`,
+      label: p.label,
+    })),
+    ...(dynamicResult
+      ? [
+          {
+            value: DYNAMIC_PAIR_VALUE,
+            label: `${dynamicResult.run1Year} vs ${dynamicResult.run2Year} (Uploaded)`,
+          },
+        ]
+      : []),
+  ];
+
+  // Auto-select dynamic pair when a new analysis completes
+  const prevDynRef = useRef<DynamicResult | null>(null);
+  useEffect(() => {
+    if (dynamicResult && dynamicResult !== prevDynRef.current) {
+      prevDynRef.current = dynamicResult;
+      setSelectedPair(DYNAMIC_PAIR_VALUE);
+      setActiveTab("overview");
+    }
+  }, [dynamicResult]);
+
+  // Resolve data based on mode
+  let data: RunData;
+  let run1: number;
+  let run2: number;
+  let clusterData: ClusterStats[] | undefined;
+  let predictionData: PredictionResult[] | undefined;
+
+  if (isDynamic) {
+    data = dynamicResult.runData;
+    run1 = dynamicResult.run1Year;
+    run2 = dynamicResult.run2Year;
+    clusterData = dynamicResult.clusterData;
+    predictionData = dynamicResult.predictionData;
+  } else {
+    const [y1, y2] = selectedPair.split("-").map(Number);
+    run1 = y1;
+    run2 = y2;
+    data = getRunData(run1, run2);
+  }
+
   const stats = computeSummaryStats(data);
+
+  // Show predictions tab for static data, and for dynamic data when predictions are available
+  const hasPredictions = !isDynamic || (predictionData && predictionData.length > 0);
+  const tabs = hasPredictions ? ALL_TABS : TABS_NO_PREDICTIONS;
+
+  // Reset to overview if current tab doesn't exist
+  if (activeTab === "predictions" && !hasPredictions) {
+    setActiveTab("overview");
+  }
 
   return (
     <section id="analysis" className="relative px-6 py-16 scroll-mt-8">
@@ -93,11 +154,19 @@ export function AnalysisSection() {
               />
             </div>
           </div>
-          <Select
-            options={pairOptions}
-            value={selectedPair}
-            onChange={(e) => setSelectedPair(e.target.value)}
-          />
+          <div className="flex items-center gap-3">
+            {isDynamic && (
+              <Badge variant="new">Live</Badge>
+            )}
+            <Select
+              options={pairOptions}
+              value={selectedPair}
+              onChange={(e) => {
+                setSelectedPair(e.target.value);
+                setActiveTab("overview");
+              }}
+            />
+          </div>
         </div>
 
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
@@ -110,8 +179,12 @@ export function AnalysisSection() {
           {activeTab === "exceptions" && (
             <ExceptionsTab data={data} stats={stats} />
           )}
-          {activeTab === "clusters" && <ClustersTab run2={run2} />}
-          {activeTab === "predictions" && <PredictionsTab />}
+          {activeTab === "clusters" && (
+            <ClustersTab run2={run2} dynamicClusters={isDynamic ? clusterData : undefined} />
+          )}
+          {activeTab === "predictions" && (
+            <PredictionsTab dynamicPredictions={isDynamic ? predictionData : undefined} />
+          )}
         </div>
       </div>
     </section>
@@ -323,8 +396,8 @@ function ExceptionsTab({
 }
 
 // ── Clusters Tab ──
-function ClustersTab({ run2 }: { run2: number }) {
-  const clusters = getClusterData(run2);
+function ClustersTab({ run2, dynamicClusters }: { run2: number; dynamicClusters?: ClusterStats[] }) {
+  const clusters = dynamicClusters ?? getClusterData(run2);
   const criticalClusters = clusters.filter((c) => c.is_critical).length;
   const avgSeverity =
     clusters.length > 0
@@ -379,8 +452,8 @@ function ClustersTab({ run2 }: { run2: number }) {
 }
 
 // ── ML Predictions Tab ──
-function PredictionsTab() {
-  const predictions = getPredictions();
+function PredictionsTab({ dynamicPredictions }: { dynamicPredictions?: PredictionResult[] }) {
+  const predictions = dynamicPredictions ?? getPredictions();
   const summary = getPredictionSummary(predictions);
   const riskByDist = getRiskByDistance(predictions);
   const probabilities = predictions.map((p) => p.corrosion_probability);

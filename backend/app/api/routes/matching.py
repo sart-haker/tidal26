@@ -8,6 +8,7 @@ from app.schemas.matching import (
     MatchingSummaryResponse,
     MatchingResultResponse,
     MatchedPairResponse,
+    EnrichedMatchingResponse,
 )
 
 router = APIRouter(prefix="/api/matching", tags=["matching"])
@@ -48,6 +49,17 @@ async def get_matching_results(
         critical_growth_count=critical_count,
         matched_pairs=[_to_response(p) for p in pairs],
     )
+
+
+@router.get("/{run1_id}/{run2_id}/enriched", response_model=EnrichedMatchingResponse)
+async def get_enriched_results(
+    run1_id: str,
+    run2_id: str,
+    svc: MatchingService = Depends(get_matching_service),
+):
+    """Return enriched matching results shaped for frontend RunData."""
+    result = await svc.get_enriched_results(run1_id, run2_id)
+    return EnrichedMatchingResponse(**result)
 
 
 @router.get("/{run1_id}/{run2_id}/critical")
