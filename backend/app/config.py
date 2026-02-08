@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
+    # Gemini AI
+    GEMINI_API_KEY: str = ""
+
     # App
     APP_NAME: str = "TIDAL26 Pipeline Integrity API"
     DEBUG: bool = False

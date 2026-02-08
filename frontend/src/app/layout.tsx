@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Luckiest_Guy } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/Tooltip";
+import { AiChatbot } from "@/components/ai/AiChatbot";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,7 +36,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${luckiestGuy.variable} antialiased`}
       >
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          {children}
+          <AiChatbot />
+        </TooltipProvider>
       </body>
     </html>
   );
