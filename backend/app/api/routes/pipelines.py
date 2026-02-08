@@ -38,6 +38,31 @@ async def list_pipelines(
     )
 
 
+# NOTE: /default MUST come before /{pipeline_id} to avoid route conflict
+@router.get("/default", response_model=PipelineResponse)
+async def get_or_create_default_pipeline(
+    repo: PipelineRepository = Depends(get_pipeline_repo),
+):
+    """Get or create a default pipeline for simplified uploads."""
+    existing = await repo.get_all(filter={"name": "Default Pipeline"}, limit=1)
+    if existing:
+        return _to_response(existing[0])
+
+    now = datetime.now(timezone.utc)
+    doc = {
+        "name": "Default Pipeline",
+        "diameter_ft": 2.5,
+        "length_ft": 0,
+        "wall_thickness_in": 0,
+        "material": "",
+        "location": "",
+        "created_at": now,
+        "updated_at": now,
+    }
+    result = await repo.create(doc)
+    return _to_response(result)
+
+
 @router.get("/{pipeline_id}", response_model=PipelineResponse)
 async def get_pipeline(
     pipeline_id: str,
