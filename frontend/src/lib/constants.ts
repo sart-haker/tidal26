@@ -1,10 +1,10 @@
 export const CHART_COLORS = [
-  "#7C5CFC", // purple
-  "#3B82F6", // blue
-  "#06B6D4", // cyan
-  "#10B981", // emerald
-  "#F59E0B", // amber
-  "#EF4444", // red
+  "#B8A9E8", // lavender
+  "#8EC5E8", // baby blue
+  "#F2A5B3", // soft pink
+  "#8FD4C0", // mint
+  "#F7C59F", // peach
+  "#E8887A", // soft coral
 ] as const;
 
 export const RUN_YEARS = [2007, 2015, 2022] as const;

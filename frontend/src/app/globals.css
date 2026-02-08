@@ -1,43 +1,43 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #9BB5CA;
-  --color-foreground: #2C4A6B;
+  --color-background: #81a4c4;
+  --color-foreground: #E0EAF2;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-bubble: var(--font-luckiest-guy);
 
   /* Surface colors */
-  --color-surface: rgba(180, 200, 220, 0.4);
-  --color-surface-hover: rgba(180, 200, 220, 0.6);
+  --color-surface: rgba(240, 245, 250, 0.65);
+  --color-surface-hover: rgba(245, 248, 252, 0.8);
 
   /* Border colors */
-  --color-border: rgba(255, 255, 255, 0.3);
-  --color-border-bright: rgba(255, 255, 255, 0.5);
+  --color-border: rgba(180, 200, 220, 0.4);
+  --color-border-bright: rgba(180, 200, 220, 0.6);
 
   /* Text colors */
   --color-text-primary: #ffffff;
-  --color-text-secondary: #2C4A6B;
-  --color-text-muted: #4A6A8A;
-  --color-text-dark: #2C4A6B;
+  --color-text-secondary: #E0EAF2;
+  --color-text-muted: #B8CDE0;
+  --color-text-dark: #1E3A52;
 
   /* Accent colors */
-  --color-accent-primary: #7A2B2B;
-  --color-accent-light: #9B3C3C;
-  --color-accent-blue: #3B6EA8;
-  --color-accent-purple: #8b5cf6;
-  --color-accent-cyan: #06b6d4;
+  --color-accent-primary: #6B7FA3;
+  --color-accent-light: #8BA3C4;
+  --color-accent-blue: #5B8DB8;
+  --color-accent-purple: #A78BFA;
+  --color-accent-cyan: #7DD3E8;
 
   /* Status colors */
-  --color-status-critical: #EF4444;
-  --color-status-warning: #F59E0B;
-  --color-status-success: #10B981;
-  --color-status-info: #6366F1;
-  --color-status-missing: #8B5CF6;
+  --color-status-critical: #E57373;
+  --color-status-warning: #FFB74D;
+  --color-status-success: #66BB9A;
+  --color-status-info: #7986CB;
+  --color-status-missing: #B39DDB;
 
   /* Light backgrounds */
-  --color-bg-light: #C8D6E1;
-  --color-bg-lighter: #D4DEE5;
+  --color-bg-light: #93B3CF;
+  --color-bg-lighter: #A8C3D9;
 }
 
 body {
@@ -68,4 +68,17 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+/* Snowfall animations */
+@keyframes snowfall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0.3; }
+}
+
+@keyframes snow-sway {
+  0%, 100% { margin-left: 0; }
+  25% { margin-left: 15px; }
+  50% { margin-left: -10px; }
+  75% { margin-left: 20px; }
 }

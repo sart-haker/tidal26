@@ -29,10 +29,10 @@ const statusColors = {
 };
 
 const sparklineColors = {
-  success: "#10B981",
-  warning: "#F59E0B",
-  critical: "#EF4444",
-  info: "#6366F1",
+  success: "#66BB9A",
+  warning: "#FFB74D",
+  critical: "#E57373",
+  info: "#7986CB",
 };
 
 export function StatCard({

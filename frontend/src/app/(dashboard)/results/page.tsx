@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function UploadPage() {
+export default function ResultsPage() {
   redirect("/");
 }

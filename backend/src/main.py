@@ -15,7 +15,6 @@ RUN_DATES = {
     2022: 2022,
 }
 
-<<<<<<< Updated upstream
 
 def run_pipeline_from_dataframes(
     df_run1: pd.DataFrame,
@@ -69,8 +68,6 @@ def run_pipeline_from_dataframes(
     }
 
 
-=======
->>>>>>> Stashed changes
 def run_pipeline(
     data_dir: str,
     output_dir: str,

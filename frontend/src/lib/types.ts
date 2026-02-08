@@ -66,6 +66,37 @@ export interface RunComparison {
   welds: WeldAlignment[];
 }
 
+// === Cluster & ML Types ===
+
+export interface ClusterStats {
+  cluster_id: number;
+  start_distance_ft: number;
+  end_distance_ft: number;
+  span_ft: number;
+  center_distance_ft: number;
+  avg_clock_position: number;
+  anomaly_count: number;
+  max_depth_pct: number;
+  avg_depth_pct: number;
+  total_length_in: number;
+  avg_width_in: number;
+  severity_score: number;
+  is_critical: boolean;
+}
+
+export interface PredictionResult {
+  prediction_distance: number;
+  corrosion_probability: number;
+  predicted_corrosion: number;
+  wall_thickness: number;
+  elevation: number | null;
+  clock_position: number | null;
+  event_type_normalized: string;
+  anomaly_density_50ft: number;
+  dist_to_bend: number;
+  dist_to_girth_weld: number;
+}
+
 // === API Types ===
 
 export interface AnalysisSummary {

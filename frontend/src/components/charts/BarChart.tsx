@@ -44,20 +44,20 @@ export function BarChart({
         data={data}
         layout={isVertical ? "vertical" : "horizontal"}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#252945" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#D0DCE8" />
         {isVertical ? (
           <>
             <XAxis
               type="number"
-              stroke="#565A75"
-              tick={{ fill: "#8B8FA8", fontSize: 12 }}
+              stroke="#A0B4C8"
+              tick={{ fill: "#D0DEE8", fontSize: 12 }}
               tickLine={false}
             />
             <YAxis
               type="category"
               dataKey={xKey}
-              stroke="#565A75"
-              tick={{ fill: "#8B8FA8", fontSize: 12 }}
+              stroke="#A0B4C8"
+              tick={{ fill: "#D0DEE8", fontSize: 12 }}
               tickLine={false}
               width={80}
             />
@@ -66,19 +66,19 @@ export function BarChart({
           <>
             <XAxis
               dataKey={xKey}
-              stroke="#565A75"
-              tick={{ fill: "#8B8FA8", fontSize: 12 }}
+              stroke="#A0B4C8"
+              tick={{ fill: "#D0DEE8", fontSize: 12 }}
               tickLine={false}
             />
             <YAxis
-              stroke="#565A75"
-              tick={{ fill: "#8B8FA8", fontSize: 12 }}
+              stroke="#A0B4C8"
+              tick={{ fill: "#D0DEE8", fontSize: 12 }}
               tickLine={false}
             />
           </>
         )}
         <Tooltip content={<ChartTooltip />} />
-        <Legend wrapperStyle={{ fontSize: 12, color: "#8B8FA8" }} />
+        <Legend wrapperStyle={{ fontSize: 12, color: "#D0DEE8" }} />
         {series.map((s, i) => (
           <Bar
             key={s.key}
@@ -86,7 +86,7 @@ export function BarChart({
             name={s.label}
             fill={s.color || CHART_COLORS[i % CHART_COLORS.length]}
             stackId={stacked ? "stack" : undefined}
-            radius={stacked ? undefined : [4, 4, 0, 0]}
+            radius={stacked ? undefined : [8, 8, 0, 0]}
           />
         ))}
       </RechartsBarChart>
